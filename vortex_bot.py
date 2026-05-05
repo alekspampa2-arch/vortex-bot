@@ -6,7 +6,7 @@ VORTEX AFFILIATES — Telegram Bot
 Что делает бот:
 - Партнёр пишет /start → бот генерирует 6-значный код
 - Код сохраняется в Supabase (таблица tg_connect_codes)
-- Партнёр вводит код в дашборде → его chat_id привязывается к аккаунту
+- Партнёр вводит код in the dashboard → его chat_id привязывается к аккаунту
 - После привязки бот отправляет уведомления автоматически через Edge Function
 """
 
@@ -79,10 +79,10 @@ def handle_start(message):
     if profile:
         name = profile.get('full_name') or profile.get('email', 'Partner')
         bot.reply_to(message, 
-            f"✅ *Уже подключено!*\n\n"
-            f"Аккаунт: *{name}*\n\n"
-            f"Вы будете получать уведомления о конверсиях и выплатах.\n\n"
-            f"[Открыть дашборд]({DASHBOARD})",
+            f"✅ *Already connected!*\n\n"
+            f"Account: *{name}*\n\n"
+            f"You will receive notifications about conversions and payouts.\n\n"
+            f"[Open dashboard]({DASHBOARD})",
             parse_mode="Markdown"
         )
         return
@@ -93,12 +93,12 @@ def handle_start(message):
     
     bot.reply_to(message,
         f"⬡ *Vortex Affiliates*\n\n"
-        f"Привет! Я бот для уведомлений партнёрской программы.\n\n"
-        f"Твой код подключения:\n\n"
+        f"Hello! Я бот для уведомлений партнёрской программы.\n\n"
+        f"Your connection code:\n\n"
         f"```\n{code}\n```\n\n"
-        f"Введи этот код в разделе *Профиль* → *Telegram Notifications* в дашборде.\n\n"
-        f"⏰ Код действителен *10 минут*.\n\n"
-        f"[Открыть дашборд]({DASHBOARD})",
+        f"Enter this code in the *Profile* → *Telegram Notifications* in the dashboard.\n\n"
+        f"⏰ Code is valid for *10 minutes*.\n\n"
+        f"[Open dashboard]({DASHBOARD})",
         parse_mode="Markdown"
     )
 
@@ -110,12 +110,12 @@ def handle_status(message):
     if profile:
         name = profile.get('full_name') or profile.get('email', 'Partner')
         bot.reply_to(message,
-            f"✅ *Подключено*\n\nАккаунт: *{name}*\n\n[Дашборд]({DASHBOARD})",
+            f"✅ *Connected*\n\nAccount: *{name}*\n\n[Dashboard]({DASHBOARD})",
             parse_mode="Markdown"
         )
     else:
         bot.reply_to(message,
-            f"❌ *Не подключено*\n\nОтправь /start чтобы получить код подключения.",
+            f"❌ *Not connected*\n\nSend /start чтобы get connection code.",
             parse_mode="Markdown"
         )
 
@@ -125,7 +125,7 @@ def handle_disconnect(message):
     profile = check_connected(chat_id)
     
     if not profile:
-        bot.reply_to(message, "Аккаунт не был подключён.")
+        bot.reply_to(message, "Account was not connected.")
         return
     
     # Find and disconnect
@@ -133,9 +133,9 @@ def handle_disconnect(message):
     if r.ok and r.json():
         aff_id = r.json()[0]['id']
         sb_req(f"/rest/v1/profiles?id=eq.{aff_id}", method="PATCH", data={"tg_chat_id": None})
-        bot.reply_to(message, "✅ Telegram отключён от аккаунта. Уведомления отключены.")
+        bot.reply_to(message, "✅ Telegram disconnected from account. Notifications disabled.")
     else:
-        bot.reply_to(message, "Ошибка. Попробуй ещё раз.")
+        bot.reply_to(message, "Error. Please try again.")
 
 @bot.message_handler(commands=['newcode'])
 def handle_newcode(message):
@@ -146,11 +146,11 @@ def handle_newcode(message):
 def handle_any(message):
     bot.reply_to(message,
         f"⬡ *Vortex Affiliates Bot*\n\n"
-        f"Команды:\n"
-        f"/start — получить код подключения\n"
-        f"/status — статус подключения\n"
-        f"/newcode — новый код\n"
-        f"/disconnect — отключить уведомления",
+        f"Commands:\n"
+        f"/start — get connection code\n"
+        f"/status — connection status\n"
+        f"/newcode — new code\n"
+        f"/disconnect — disable notifications",
         parse_mode="Markdown"
     )
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         print()
         try:
             bot.send_message(ADMIN_CHAT_ID,
-                "⛡ Vortex Bot запущен!\n\n✅ Бот онлайн",
+                "⛡ Vortex Bot started!\n\n✅ Bot is online",
                 parse_mode="Markdown"
             )
         except Exception:
